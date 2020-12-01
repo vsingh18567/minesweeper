@@ -6,28 +6,20 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
-public abstract class Block extends JPanel {
+public abstract class Block {
     private BlockState state;
     private int numberOfNeighbours;
     private int x;
     private int y;
-    private int size;
+    private int width;
     private boolean gameEnd;
     
-    public Block (boolean isBomb, BlockState state, int x, int y, int size) {
+    public Block (BlockState state, int x, int y, int width) {
         this.state = state;
         this.x = x;
         this.y = y;
-        this.size = size;
+        this.width = width;
         
-        addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getButton() == MouseEvent.BUTTON1) {
-                    leftClick();
-                } else if (evt.getButton() == MouseEvent.BUTTON2) {
-                    rightClick();
-                }
-            }});
     }
     
     public BlockState getState() {
@@ -43,16 +35,16 @@ public abstract class Block extends JPanel {
     }
     
     public int getY() {
-        return this.x;
+        return this.y;
     }
 
     public abstract void setNeighbours(int number);
     
     public abstract int getNeighbours();
     
-    public abstract void draw(Graphics g);
+    // public abstract void draw(Graphics g);
     
-    protected abstract void leftClick();
+    protected abstract void leftClick(Graphics2D g);
     
     private void rightClick() {
         if (state == BlockState.FLAGGED) {
@@ -65,6 +57,18 @@ public abstract class Block extends JPanel {
     public boolean hasGameEnded() {
         return this.gameEnd;
     }
+    
+    public int getWidth() {
+        return this.width;
+    }
+    
+    @Override
+    public String toString() {
+        return Integer.toString(this.x) + "," + Integer.toString(this.y);
+    }
+
+    public abstract void draw(Graphics2D g);
+
     
     
 }
