@@ -10,7 +10,6 @@ public class SafeBlock extends Block {
     private int x;
     private int y;
     private int width;
-    private boolean gameEnd;    
     
     public SafeBlock(BlockState state, int x, int y, int width) {
         super(state, x, y, width);
@@ -28,30 +27,34 @@ public class SafeBlock extends Block {
     
     @Override
     protected LeftClickResponse leftClick() {
+        setState(BlockState.DISCOVERED);
         if (getNeighbours() == 0) {
             return LeftClickResponse.FLOODFILL;
         }
         else {
-            setState(BlockState.DISCOVERED);
             return LeftClickResponse.ALLGOOD;
         }
     }
     
     @Override
     public void draw(Graphics2D g) {
-        if (getState() == BlockState.UNCHECKED) {
+
+        switch (getState()) {
+        case UNCHECKED:
             g.setColor(Color.GRAY);
-            g.fillRect(getX(), getY(), getWidth(), getWidth());
-            g.setColor(Color.BLACK);
-            g.drawRect(getX(), getY(), getWidth(), getWidth());
-        } else if (getState() == BlockState.DISCOVERED) {
+            break;
+        case DISCOVERED:
             g.setColor(Color.GREEN);
-            g.fillRect(getX(), getY(), getWidth(), getWidth());
-            g.setColor(Color.BLACK);
-            g.drawRect(getX(), getY(), getWidth(), getWidth());
-            if (getNeighbours() != 0) {
-                g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2, getY() + getWidth() / 2);
-            }
+            break;
+        case FLAGGED:
+            g.setColor(Color.ORANGE);
+            break;
+        }
+        g.fillRect(getX(), getY(), getWidth(), getWidth());
+        g.setColor(Color.BLACK);
+        g.drawRect(getX(), getY(), getWidth(), getWidth());
+        if (getNeighbours() != 0) {
+            g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2, getY() + getWidth() / 2);
         }
         
     }

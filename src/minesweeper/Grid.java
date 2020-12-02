@@ -19,6 +19,8 @@ public class Grid extends JPanel {
     private Block[][] blocks;
     private int size;
     private final static int[][] neighbours = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
+    // 1 if won, -1 if lost, 0 otherwise
+    private int gameStatus;
     
     public Grid(int rows, int cols, int numBombs) {
         this.rows = rows;
@@ -29,10 +31,10 @@ public class Grid extends JPanel {
         this.generateBlocks();
         this.setLayout(new GridLayout());
         this.mouseListenerHelper();
-
+        this.gameStatus = 0;
     }
     
-    public void mouseListenerHelper() {
+    private void mouseListenerHelper() {
         this.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int x = e.getX();
@@ -42,11 +44,23 @@ public class Grid extends JPanel {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     try {
                         LeftClickResponse response = blocks[row][col].leftClick();
-                        if (response == LeftClickResponse.FLOODFILL) {
+                        switch (response) {
+                        case FLOODFILL:
                             floodFill(row, col);
-                        } else if (response == LeftClickResponse.ENDGAME) {
+                            break;
+                        case ENDGAME:
+                            gameStatus = -1;
                             endGame();
+                            break;
+                        case ALLGOOD:
+                            boolean win = isGameWon();
+                            if (win) {
+                                gameStatus = 1;
+                                endGame();
+                            }
+                            break;
                         }
+
                         repaint();
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // catches clicking on the last row/col which isn't actually part of grid
@@ -64,6 +78,19 @@ public class Grid extends JPanel {
             }
        });
         
+    }
+    
+    public void reset() {
+        this.rows = rows;
+        this.cols = cols;
+        this.numBombs = numBombs;
+        this.blocks = new Block[this.rows][];
+        this.size = Math.min(WIDTH, HEIGHT) / rows;
+        this.generateBlocks();
+        this.setLayout(new GridLayout());
+        this.mouseListenerHelper();
+        this.gameStatus = 0;    
+        repaint();
     }
     
     
@@ -118,20 +145,38 @@ public class Grid extends JPanel {
         return set;
     }
     
-    
-    private void floodFill(int row, int col) {
-        Block block = this.blocks[row][col];
-        if (block.getNeighbours() == 0 && block.getState() != BlockState.DISCOVERED) {
-            block.setState(BlockState.DISCOVERED);
-            for (int[] neighbour: neighbours) {
-                floodFill(row + neighbour[0], col + neighbour[1]);
-            }
+    // helper for floodFill
+    private boolean isSafe(int row, int col) {
+        boolean inGrid = row >= 0 && row < this.blocks.length && col >= 0 && col < this.blocks[0].length;
+        if (inGrid) {
+            Block block = this.blocks[row][col];
+            return block.getState() != BlockState.DISCOVERED;
         } else {
-            block.setState(BlockState.DISCOVERED);
+            return false;
         }
     }
     
-    public void endGame() {
+    
+    private void floodFill(int row, int col) {
+        /* https://en.wikipedia.org/wiki/Flood_fill#Stack-based_recursive_implementation_(four-way)
+         * Start node: this.blocks[row][col]
+         * target-color: block.getState() == BlockState.UNCHECKED && block.getNeighbours() == 0
+         * replacement-color: block.setState(BlockState.DISCOVERED)
+         */
+        
+        Block block = this.blocks[row][col];
+        System.out.println(block.toString() + " " + block.getState() + " " + Integer.toString(block.getNeighbours()));
+        block.setState(BlockState.DISCOVERED);
+        if (block.getNeighbours() == 0) {
+            for (int[] neighbour:neighbours){
+                if (isSafe(row + neighbour[0], col + neighbour[1])) {
+                    floodFill(row + neighbour[0], col + neighbour[1]);
+                }
+            }
+        }
+    }
+    
+    private void endGame() {
         for (int row = 0; row < this.rows; row++) {
             for (int col = 0; col < this.cols; col++) {
                 Block block = this.blocks[row][col];
@@ -140,6 +185,18 @@ public class Grid extends JPanel {
         }
     }
     
+    
+    private boolean isGameWon() {
+        for (int row = 0; row < this.rows; row++) {
+            for (int col = 0; col < this.cols; col++) {
+                Block block = this.blocks[row][col];
+                if (block.getState() != BlockState.DISCOVERED && block.getNeighbours() != -1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
     @Override
     public void paintComponent(Graphics g) {

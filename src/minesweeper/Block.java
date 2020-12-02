@@ -12,7 +12,6 @@ public abstract class Block {
     private int x;
     private int y;
     private int width;
-    private boolean gameEnd;
     
     public Block (BlockState state, int x, int y, int width) {
         this.state = state;
@@ -52,10 +51,6 @@ public abstract class Block {
         } else if (state == BlockState.UNCHECKED) {
             setState(BlockState.FLAGGED);
         }
-    }
-    
-    public boolean hasGameEnded() {
-        return this.gameEnd;
     }
     
     public int getWidth() {

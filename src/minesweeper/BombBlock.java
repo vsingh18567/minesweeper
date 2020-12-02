@@ -9,7 +9,6 @@ public class BombBlock extends Block {
     private int x;
     private int y;
     private int width;
-    private boolean gameEnd;    
     
     public BombBlock(BlockState state, int x, int y, int width) {
         super(state, x, y, width);
