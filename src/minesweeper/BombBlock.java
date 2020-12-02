@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 
 public class BombBlock extends Block {
     private BlockState state;
-    private int numberOfNeighbours;
     private int x;
     private int y;
     private int width;
@@ -18,33 +17,36 @@ public class BombBlock extends Block {
     
     @Override
     public void setNeighbours(int number) {
-        this.numberOfNeighbours = number;
+        // you don't want to store neighbours 
     }
     
     @Override
     public int getNeighbours() {
-        return this.numberOfNeighbours;
+        return -1;
     }
     
     @Override
-    protected void leftClick(Graphics2D g) {
-        this.state = BlockState.DISCOVERED;
-        this.draw(g);
+    protected LeftClickResponse leftClick() {
+        setState(BlockState.DISCOVERED);
+        return LeftClickResponse.ENDGAME;
     }
     
     @Override
     public void draw(Graphics2D g) {
-        if (getState() == BlockState.UNCHECKED) {
+        switch (getState()) {
+        case UNCHECKED:
             g.setColor(Color.GRAY);
-            g.fillRect(getX(), getY(), getWidth(), getWidth());
-            g.setColor(Color.BLACK);
-            g.drawRect(getX(), getY(), getWidth(), getWidth());
-        } else if (getState() == BlockState.DISCOVERED) {
+            break;
+        case DISCOVERED:
             g.setColor(Color.RED);
-            g.fillRect(getX(), getY(), getWidth(), getWidth());
-            g.setColor(Color.BLACK);
-            g.drawRect(getX(), getY(), getWidth(), getWidth());
+            break;
+        case FLAGGED:
+            g.setColor(Color.ORANGE);
+            break;
         }
+        g.fillRect(getX(), getY(), getWidth(), getWidth());
+        g.setColor(Color.BLACK);
+        g.drawRect(getX(), getY(), getWidth(), getWidth());
     }
     
     

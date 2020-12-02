@@ -44,14 +44,14 @@ public abstract class Block {
     
     // public abstract void draw(Graphics g);
     
-    protected abstract void leftClick(Graphics2D g);
+    protected abstract LeftClickResponse leftClick();
     
-    private void rightClick() {
+    public void rightClick() {
         if (state == BlockState.FLAGGED) {
             setState(BlockState.UNCHECKED);
         } else if (state == BlockState.UNCHECKED) {
             setState(BlockState.FLAGGED);
-        } 
+        }
     }
     
     public boolean hasGameEnded() {

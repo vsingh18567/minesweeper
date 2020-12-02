@@ -27,9 +27,14 @@ public class SafeBlock extends Block {
     }
     
     @Override
-    protected void leftClick(Graphics2D g) {
-        this.state = BlockState.DISCOVERED;
-        this.draw(g);
+    protected LeftClickResponse leftClick() {
+        if (getNeighbours() == 0) {
+            return LeftClickResponse.FLOODFILL;
+        }
+        else {
+            setState(BlockState.DISCOVERED);
+            return LeftClickResponse.ALLGOOD;
+        }
     }
     
     @Override
@@ -44,6 +49,9 @@ public class SafeBlock extends Block {
             g.fillRect(getX(), getY(), getWidth(), getWidth());
             g.setColor(Color.BLACK);
             g.drawRect(getX(), getY(), getWidth(), getWidth());
+            if (getNeighbours() != 0) {
+                g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2, getY() + getWidth() / 2);
+            }
         }
         
     }
