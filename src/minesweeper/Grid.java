@@ -21,6 +21,7 @@ public class Grid extends JPanel {
     private final static int[][] neighbours = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
     // 1 if won, -1 if lost, 0 otherwise
     private int gameStatus;
+    private final static String FILEPATH = "files/lastgame.txt";
     
     public Grid(int rows, int cols, int numBombs) {
         this.rows = rows;
@@ -32,10 +33,15 @@ public class Grid extends JPanel {
         this.setLayout(new GridLayout());
         this.mouseListenerHelper();
         this.gameStatus = 0;
+        this.setFocusable(true);
     }
     
     
-    public Grid(BlockState[][] blockStates, TreeSet<Integer> bombLocations) {
+    public Grid() {
+        GameDataParser gdp = new GameDataParser(FILEPATH);
+        BlockState[][] blockStates = gdp.getDiscoveredStates();
+        TreeSet<Integer> bombLocations = gdp.getBombLocations();
+        
         this.rows = blockStates.length;
         this.cols = blockStates[0].length;
         this.numBombs = bombLocations.size();
@@ -45,8 +51,12 @@ public class Grid extends JPanel {
         this.setLayout(new GridLayout());
         this.mouseListenerHelper();
         this.gameStatus = 0;
-        System.out.println(this.blocks.length);
-        repaint();
+        for (int row = 0; row < this.rows; row++) {
+            for (int col = 0; col < this.cols; col++) {
+            }
+       }
+       this.setFocusable(true);
+
     }
     
     
@@ -82,14 +92,12 @@ public class Grid extends JPanel {
                     }
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     try {
-                        System.out.println("yeet");
                         blocks[row][col].rightClick();
                         repaint();
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // catches clicking on the last row/col which isn't actually part of grid
                     }
                 }
-                System.out.println(e.getButton());
             }
        });
         
@@ -130,12 +138,10 @@ public class Grid extends JPanel {
     }
     
     private void loadBlocks(BlockState[][] blockStates, TreeSet<Integer> bombLocations) {
-        System.out.println(bombLocations.size());
         for (int row = 0; row < this.rows; row++) {
             Block[] blockRow = new Block[this.cols];
             for (int col = 0; col < this.cols; col++) {
                 if (bombLocations.size() != 0 && row * this.cols + col == bombLocations.first()) {
-                    System.out.println("Hi");
                     blockRow[col] = new BombBlock(blockStates[row][col], this.size * row, this.size * col, this.size);
                     bombLocations.pollFirst();
                 } else {
@@ -144,8 +150,9 @@ public class Grid extends JPanel {
             }
             this.blocks[row] = blockRow;
         }
-        
+        System.out.println(this.blocks.length);
         generateNeighbours();
+        repaint();
     }
     
     

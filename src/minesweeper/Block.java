@@ -59,7 +59,7 @@ public abstract class Block {
     
     @Override
     public String toString() {
-        return Integer.toString(this.x) + "," + Integer.toString(this.y);
+        return getState() + Integer.toString(this.x) + "," + Integer.toString(this.y);
     }
 
     public abstract void draw(Graphics2D g);
