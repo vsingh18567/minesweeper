@@ -34,6 +34,22 @@ public class Grid extends JPanel {
         this.gameStatus = 0;
     }
     
+    
+    public Grid(BlockState[][] blockStates, TreeSet<Integer> bombLocations) {
+        this.rows = blockStates.length;
+        this.cols = blockStates[0].length;
+        this.numBombs = bombLocations.size();
+        this.blocks = new Block[this.rows][];
+        this.size = Math.min(WIDTH, HEIGHT);
+        this.loadBlocks(blockStates, bombLocations);
+        this.setLayout(new GridLayout());
+        this.mouseListenerHelper();
+        this.gameStatus = 0;
+        System.out.println(this.blocks.length);
+        repaint();
+    }
+    
+    
     private void mouseListenerHelper() {
         this.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -60,7 +76,6 @@ public class Grid extends JPanel {
                             }
                             break;
                         }
-
                         repaint();
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // catches clicking on the last row/col which isn't actually part of grid
@@ -109,7 +124,32 @@ public class Grid extends JPanel {
             }
             this.blocks[row] = blockRow;
         }
+        generateNeighbours();
         
+
+    }
+    
+    private void loadBlocks(BlockState[][] blockStates, TreeSet<Integer> bombLocations) {
+        System.out.println(bombLocations.size());
+        for (int row = 0; row < this.rows; row++) {
+            Block[] blockRow = new Block[this.cols];
+            for (int col = 0; col < this.cols; col++) {
+                if (bombLocations.size() != 0 && row * this.cols + col == bombLocations.first()) {
+                    System.out.println("Hi");
+                    blockRow[col] = new BombBlock(blockStates[row][col], this.size * row, this.size * col, this.size);
+                    bombLocations.pollFirst();
+                } else {
+                    blockRow[col] = new SafeBlock(blockStates[row][col], this.size * row, this.size * col, this.size);
+                }
+            }
+            this.blocks[row] = blockRow;
+        }
+        
+        generateNeighbours();
+    }
+    
+    
+    private void generateNeighbours() {
         // Find number of neighbours
         for (int row = 0; row < this.rows; row++) {
             for (int col = 0; col < this.cols; col++) {
@@ -128,10 +168,8 @@ public class Grid extends JPanel {
                 block.setNeighbours(bombNeighbours);
             }
         }
-        
-        
-        
     }
+    
     
     // helper function
     private static TreeSet<Integer> getNRandom(int n, int max) {
@@ -197,6 +235,12 @@ public class Grid extends JPanel {
         }
         return true;
     }
+    
+    public void saveArray() {
+        GameDataParser gdp = new GameDataParser("files/lastgame.txt");
+        gdp.saveData(this.blocks);
+    }
+    
     
     @Override
     public void paintComponent(Graphics g) {

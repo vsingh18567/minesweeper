@@ -45,6 +45,7 @@ public class SafeBlock extends Block {
             break;
         case DISCOVERED:
             g.setColor(Color.GREEN);
+            
             break;
         case FLAGGED:
             g.setColor(Color.ORANGE);
@@ -53,7 +54,7 @@ public class SafeBlock extends Block {
         g.fillRect(getX(), getY(), getWidth(), getWidth());
         g.setColor(Color.BLACK);
         g.drawRect(getX(), getY(), getWidth(), getWidth());
-        if (getNeighbours() != 0) {
+        if (getNeighbours() != 0 && getState() == BlockState.DISCOVERED) {
             g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2, getY() + getWidth() / 2);
         }
         
