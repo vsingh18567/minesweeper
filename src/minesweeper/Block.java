@@ -40,9 +40,7 @@ public abstract class Block {
     public abstract void setNeighbours(int number);
     
     public abstract int getNeighbours();
-    
-    // public abstract void draw(Graphics g);
-    
+        
     protected abstract LeftClickResponse leftClick();
     
     public void rightClick() {
@@ -57,12 +55,13 @@ public abstract class Block {
         return this.width;
     }
     
+    
     @Override
     public String toString() {
-        return getState() + Integer.toString(this.x) + "," + Integer.toString(this.y);
+        return getState() + Integer.toString(this.x) + "," + Integer.toString(this.y) + "," + this.getNeighbours();
     }
 
-    public abstract void draw(Graphics2D g);
+    public abstract void draw(Graphics2D g, int shift);
 
     
     

@@ -31,7 +31,7 @@ public class BombBlock extends Block {
     }
     
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, int shift) {
         switch (getState()) {
         case UNCHECKED:
             g.setColor(Color.GRAY);

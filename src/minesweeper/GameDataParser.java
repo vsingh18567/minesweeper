@@ -7,65 +7,54 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class GameDataParser {
-    private static final String DEFAULTGAME = "-1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1n-1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0n-1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0n-1_1 -1_1 -1_0 -1_0 -1_0 -1_1 -1_0 -1_1 -1_0 -1_0 -1_0 -1_1 -1_0 -1_1 -1_0 -1_0 -1_0 -1_1 -1_1 -1_0n-1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_1 -1_0 -1_0 -1_0 -1_1 -1_0 -1_1n-1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0n-1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_1 -1_0 -1_1 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_1n-1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_1 -1_0 -1_1 -1_0n-1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_1 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0n-1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1n-1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_1n-1_0 -1_1 -1_0 -1_1 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1 -1_0 -1_0 -1_1"; 
-    private String text;
+    private static final String DEFAULTGAME = "";
     private String filepath;
-    /* Format of text:
-     * A block in the array is represented by x_y, where x indicates whether or not its discovered,
-     * and y if its a bomb or not.
-     * x: 1 if discovered, 0 if flagged, -1 if unchecked
-     * y: 1 if bomb, 0 otherwise
-     * 
-     * Format of file itself
-     * File: 'x1_y1 x2_y2 x3_y3 | x4_y4 x5_y5 x6_y6 | x7_y7 x8_y8 x9_y9'
-     * | separates rows, the spaces separate columns
-     */ 
+    private ArrayList<ScoreData> easyScore;
+    private ArrayList<ScoreData> mediumScore;
+    private ArrayList<ScoreData> hardScore;
+    private HashMap<Integer, ArrayList<ScoreData>> difficultyMap;
+    private String text;
+
     
-    private BlockState[][] discoveredStates;
-    private TreeSet<Integer> bombLocations;
     
     public GameDataParser(String filepath) {
         this.filepath = filepath;
+        this.easyScore = new ArrayList<ScoreData>();
+        this.mediumScore = new ArrayList<ScoreData>();
+        this.hardScore = new ArrayList<ScoreData>();
+        this.difficultyMap = new HashMap<Integer, ArrayList<ScoreData>>();
+        this.difficultyMap.put(0, this.easyScore);
+        this.difficultyMap.put(1,  this.mediumScore);
+        this.difficultyMap.put(2,  this.hardScore);
         loadData();
+
     }
     
-    public void saveData(Block[][] blocks) {
+    
+    public void saveData() {
         String data = "";
-        for (int row = 0; row < blocks.length; row++) {
-            String rowData = "";
-            if (row != 0) {
-                rowData += "n";
+        boolean startingRow = true;
+        for (int i=0; i < 3; i++) {
+            ArrayList<ScoreData> difficultyData = this.difficultyMap.get(i);
+            Iterator<ScoreData> iterator = difficultyData.iterator();
+            while (iterator.hasNext()) {            
+                ScoreData nextPoint = iterator.next();
+                String user = nextPoint.getUser();
+                String duration = Integer.toString(nextPoint.getDuration());
+                data += user + "_" + duration + " ";
+                
             }
-            for (int col = 0; col < blocks[row].length; col++) {
-                Block block = blocks[row][col];
-                String blockData = "";
-                switch (block.getState()) {
-                case DISCOVERED:
-                    blockData += "1";
-                    break;
-                case FLAGGED:
-                    blockData += "0";
-                    break;
-                case UNCHECKED:
-                    blockData += "-1";
-                    break;
-                }
-                blockData += "_";
-                if (block.getNeighbours() == -1) {
-                    blockData += "1";
-                } else {
-                    blockData += "0";
-                }
-                if (col + 1 != blocks[row].length) {
-                    blockData += " ";
-                }
-                rowData += blockData;
-            }
-            data += rowData;
         }
+        data.trim();
+
         System.out.println(data);
         
         try {
@@ -95,41 +84,38 @@ public class GameDataParser {
             e.printStackTrace();
             this.text = DEFAULTGAME;
         }   
-        this.bombLocations = new TreeSet<Integer>();
-        String[] rows = this.text.split("n");
-        BlockState[][] newStates = new BlockState[rows.length][];
-        for (int row = 0; row < rows.length; row++) {
-            String[] cols = rows[row].split(" ");
-            BlockState[] blockRow = new BlockState[cols.length];
-            for (int col = 0; col < cols.length; col++) {
-                String[] data = cols[col].split("_");
-                switch (data[0]) {
-                case "1":
-                    blockRow[col] = BlockState.DISCOVERED;
-                    break;
-                case "0":
-                    blockRow[col] = BlockState.FLAGGED;
-                    break;
-                case "-1":
-                    blockRow[col] = BlockState.UNCHECKED;
-                    break;
-                }
-                if (data[1].equals("1")) {
-                    this.bombLocations.add(row * cols.length + col);
-                }
-            }
-            newStates[row] = blockRow;
+        String[] dataPoints = this.text.split(" ");
+        this.easyScore.clear();
+        this.mediumScore.clear();
+        this.hardScore.clear();
+        for (int i = 0; i < dataPoints.length; i++) {
+            String[] dataPoint = dataPoints[i].split("_");
+            ScoreData scoreData = new ScoreData(dataPoint[0], Integer.parseInt(dataPoint[1]));
+            this.difficultyMap.get((int) i / 10).add(scoreData);
         }
-        this.discoveredStates = newStates;
     }
     
-    public BlockState[][] getDiscoveredStates() {
-        return this.discoveredStates;
+    public boolean isNewHighScore(int difficultyLevel, int score) {
+        ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
+        ScoreData lowestScore = difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1); // highest duration
+        if (lowestScore.getDuration() > score) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
-    public TreeSet<Integer> getBombLocations() {
-        return this.bombLocations;
+    public void insertScore(int difficultyLevel, String user, int score) {
+        ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
+        difficultyData.remove(difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1));
+        ScoreData newScore = new ScoreData(user, score);
+        difficultyData.add(newScore);
+        this.difficultyMap.put(difficultyLevel, difficultyData);
     }
+    
+   public ArrayList<ScoreData> getData(int difficulty) {
+       return this.difficultyMap.get(difficulty);
+   }
     
     
     

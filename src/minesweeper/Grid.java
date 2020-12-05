@@ -11,8 +11,8 @@ import java.util.TreeSet;
 import javax.swing.*;
 
 public class Grid extends JPanel {
-    private final static int WIDTH = 800;
-    private final static int HEIGHT = 800;
+    private final static int WIDTH = 600;
+    private final static int HEIGHT = 600;
     private int rows;
     private int cols;
     private int numBombs;
@@ -20,7 +20,7 @@ public class Grid extends JPanel {
     private int size;
     private final static int[][] neighbours = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
     // 1 if won, -1 if lost, 0 otherwise
-    private int gameStatus;
+    private GameStatus gameStatus;
     private final static String FILEPATH = "files/lastgame.txt";
     
     public Grid(int rows, int cols, int numBombs) {
@@ -32,32 +32,10 @@ public class Grid extends JPanel {
         this.generateBlocks();
         this.setLayout(new GridLayout());
         this.mouseListenerHelper();
-        this.gameStatus = 0;
+        this.gameStatus = GameStatus.PLAYING;
         this.setFocusable(true);
     }
     
-    
-    public Grid() {
-        GameDataParser gdp = new GameDataParser(FILEPATH);
-        BlockState[][] blockStates = gdp.getDiscoveredStates();
-        TreeSet<Integer> bombLocations = gdp.getBombLocations();
-        
-        this.rows = blockStates.length;
-        this.cols = blockStates[0].length;
-        this.numBombs = bombLocations.size();
-        this.blocks = new Block[this.rows][];
-        this.size = Math.min(WIDTH, HEIGHT);
-        this.loadBlocks(blockStates, bombLocations);
-        this.setLayout(new GridLayout());
-        this.mouseListenerHelper();
-        this.gameStatus = 0;
-        for (int row = 0; row < this.rows; row++) {
-            for (int col = 0; col < this.cols; col++) {
-            }
-       }
-       this.setFocusable(true);
-
-    }
     
     
     private void mouseListenerHelper() {
@@ -75,13 +53,13 @@ public class Grid extends JPanel {
                             floodFill(row, col);
                             break;
                         case ENDGAME:
-                            gameStatus = -1;
+                            gameStatus = GameStatus.GAMELOST;
                             endGame();
                             break;
                         case ALLGOOD:
                             boolean win = isGameWon();
                             if (win) {
-                                gameStatus = 1;
+                                gameStatus = GameStatus.GAMEWON;
                                 endGame();
                             }
                             break;
@@ -111,8 +89,7 @@ public class Grid extends JPanel {
         this.size = Math.min(WIDTH, HEIGHT) / rows;
         this.generateBlocks();
         this.setLayout(new GridLayout());
-        this.mouseListenerHelper();
-        this.gameStatus = 0;    
+        this.gameStatus = GameStatus.PLAYING;    
         repaint();
     }
     
@@ -137,7 +114,12 @@ public class Grid extends JPanel {
 
     }
     
+    private void setBlocks(Block[][] blockArr) {
+        this.blocks = blockArr;
+    }
+    
     private void loadBlocks(BlockState[][] blockStates, TreeSet<Integer> bombLocations) {
+        Block[][] blockArr = new Block[this.rows][];
         for (int row = 0; row < this.rows; row++) {
             Block[] blockRow = new Block[this.cols];
             for (int col = 0; col < this.cols; col++) {
@@ -148,10 +130,12 @@ public class Grid extends JPanel {
                     blockRow[col] = new SafeBlock(blockStates[row][col], this.size * row, this.size * col, this.size);
                 }
             }
-            this.blocks[row] = blockRow;
+            blockArr[row] = blockRow;
         }
-        System.out.println(this.blocks.length);
+        this.blocks = blockArr;
+        System.out.println("STEP 2 " + this.blocks.length);
         generateNeighbours();
+        System.out.println("STEP 3 " + this.blocks.length);
         repaint();
     }
     
@@ -228,6 +212,7 @@ public class Grid extends JPanel {
                 block.setState(BlockState.DISCOVERED);
             }
         }
+        this.gameStatus = GameStatus.GAMELOST;
     }
     
     
@@ -240,24 +225,48 @@ public class Grid extends JPanel {
                 }
             }
         }
+        this.gameStatus = GameStatus.GAMEWON;
         return true;
     }
     
-    public void saveArray() {
-        GameDataParser gdp = new GameDataParser("files/lastgame.txt");
-        gdp.saveData(this.blocks);
+    
+    public GameStatus getGameStatus() {
+        return this.gameStatus;
     }
     
+    public void setGameStatus(GameStatus status) {
+        this.gameStatus = status;
+    }
+    
+    public Block[][] getBlocks() {
+        return this.blocks.clone();
+    }
     
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2D = (Graphics2D) g;
+        int shift;
+        switch (this.rows) {
+        case 23:
+            g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 12));
+            shift = 3;
+            break;
+        case 16:
+            g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 16));
+            shift = 4;
+            break;
+        default:
+            g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 20));
+            shift = 6;
+            break;
+        }
         
+        super.paintComponent(g);
+        System.out.println("STEP 8 " + this.getBlocks().length);
+        Graphics2D g2D = (Graphics2D) g;
         for (int row = 0; row < this.rows; row++) {
             for (int col = 0; col < this.cols; col++) {
                 Block block = this.blocks[row][col];
-                block.draw(g2D);
+                block.draw(g2D, shift);
                 
             }
         }

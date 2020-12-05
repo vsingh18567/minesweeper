@@ -37,7 +37,7 @@ public class SafeBlock extends Block {
     }
     
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, int shift) {
 
         switch (getState()) {
         case UNCHECKED:
@@ -48,16 +48,15 @@ public class SafeBlock extends Block {
             
             break;
         case FLAGGED:
-            g.setColor(Color.ORANGE);
+            g.setColor(new Color(255, 140, 0));
             break;
         }
         g.fillRect(getX(), getY(), getWidth(), getWidth());
         g.setColor(Color.BLACK);
         g.drawRect(getX(), getY(), getWidth(), getWidth());
         if (getNeighbours() != 0 && getState() == BlockState.DISCOVERED) {
-            g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2, getY() + getWidth() / 2);
+            g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2 - shift, getY() + getWidth() / 2 + shift);
         }
-        
     }
     
 
