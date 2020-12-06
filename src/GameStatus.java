@@ -1,4 +1,4 @@
-package Enums;
+
 
 /**
  * Enum that stores the Game Status of the current game. 

@@ -1,4 +1,4 @@
-package Enums;
+
 
 /**
  * Enum that holds all possible actions that follow a left-click

@@ -1,11 +1,7 @@
 
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import Enums.BlockState;
-import Enums.LeftClickResponse;
 /**
  * A SafeBlock is every block that is not a BombBlock. 
  * @author vikramsingh

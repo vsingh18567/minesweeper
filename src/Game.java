@@ -2,36 +2,27 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javax.swing.*;
-
-import Enums.GameStatus;
 
 /**
  * Minesweeper application developed by Vikram Singh as Homework 9 of CIS 120, Fall 2020.
  */
 public class Game implements Runnable {
-    public static final JFrame frame = new JFrame("Minesweeper");
-    public static final GridBagConstraints gbc = new GridBagConstraints();
+    public static final JFrame FRAME = new JFrame("Minesweeper");
+    public static final GridBagConstraints GBC = new GridBagConstraints();
     
     /**
      * Sets up basic frame settings and triggers home screen
      */
     public void run() {
-        frame.setLayout(new GridBagLayout());
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setSize(800,800);
-        frame.setVisible(true);
-        frame.setBackground(Color.PINK);
+        FRAME.setLayout(new GridBagLayout());
+        FRAME.setResizable(false);
+        FRAME.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        FRAME.setSize(800,800);
+        FRAME.setVisible(true);
+        FRAME.setBackground(Color.PINK);
         homeScreen();
         // Initial screen
     }
@@ -40,33 +31,33 @@ public class Game implements Runnable {
      * Home screen that contains title, buttons that lead to "New Game", "View High Scores" and instructions.
      */
     private void homeScreen() {
-        frame.getContentPane().removeAll();
-        frame.getContentPane().setBackground(Color.PINK);
+        FRAME.getContentPane().removeAll();
+        FRAME.getContentPane().setBackground(Color.PINK);
 
-        gbc.insets = new Insets(3, 3, 3, 3);
-        gbc.ipady = 10;
+        GBC.insets = new Insets(3, 3, 3, 3);
+        GBC.ipady = 10;
 
         JLabel title = new JLabel("Minesweeper");
         title.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 40));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        frame.add(title, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 0;
+        GBC.gridwidth = 2;
+        FRAME.add(title, GBC);
         
         JLabel difficulty = new JLabel("Difficulty: ");
         difficulty.setFont(new Font(difficulty.getFont().getFontName(), Font.PLAIN, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        frame.add(difficulty, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 2;
+        GBC.gridwidth = 1;
+        FRAME.add(difficulty, GBC);
         
         
         String[] difficulties = {"Easy", "Medium", "Hard"};
         JComboBox difficultyList = new JComboBox<String>(difficulties);
         difficultyList.setFont(new Font(difficultyList.getFont().getFontName(), Font.PLAIN, 18));
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        frame.add(difficultyList, gbc);
+        GBC.gridx = 1;
+        GBC.gridy = 2;
+        FRAME.add(difficultyList, GBC);
         
         
         JButton newGame = new JButton("New Game");
@@ -77,10 +68,10 @@ public class Game implements Runnable {
                 loadGame((String) difficultyList.getSelectedItem());
             }
         });
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        frame.add(newGame, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 3;
+        GBC.gridwidth = 2;
+        FRAME.add(newGame, GBC);
         
         JButton highScores = new JButton("View High Scores");
         highScores.setFont(new Font(highScores.getFont().getFontName(), Font.PLAIN, 18));
@@ -90,9 +81,9 @@ public class Game implements Runnable {
                 viewHighScores();
             }
         });
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        frame.add(highScores, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 4;
+        FRAME.add(highScores, GBC);
         
         JButton instructions = new JButton("Instructions");
         instructions.setFont(new Font(instructions.getFont().getFontName(), Font.PLAIN, 18));
@@ -102,16 +93,16 @@ public class Game implements Runnable {
                 loadInstructions();
             }
         });
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        frame.add(instructions, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 5;
+        FRAME.add(instructions, GBC);
         
         JLabel credits = new JLabel("Made by Vikram Singh - Penn ID: 40121920");
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        frame.add(credits, gbc);
-        frame.validate();        
-        frame.repaint();
+        GBC.gridx = 0;
+        GBC.gridy = 6;
+        FRAME.add(credits, GBC);
+        FRAME.validate();        
+        FRAME.repaint();
         
     }
     
@@ -122,7 +113,7 @@ public class Game implements Runnable {
      */
     @SuppressWarnings("unchecked")
     private void loadGame(String gameType) {
-        frame.getContentPane().removeAll();        
+        FRAME.getContentPane().removeAll();        
         
         Grid grid;
         int difficulty;
@@ -143,18 +134,18 @@ public class Game implements Runnable {
         }
         
         
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 6;
-        frame.add(grid, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 0;
+        GBC.gridwidth = 6;
+        FRAME.add(grid, GBC);
         
-        gbc.gridwidth = 1;
+        GBC.gridwidth = 1;
 
         final GameTimer timer = new GameTimer();
         timer.setFont(new Font(timer.getFont().getFontName(), Font.PLAIN, 20));
-        gbc.gridx = 4;
-        gbc.gridy = 1;
-        frame.add(timer, gbc);
+        GBC.gridx = 4;
+        GBC.gridy = 1;
+        FRAME.add(timer, GBC);
 
     
         
@@ -164,30 +155,30 @@ public class Game implements Runnable {
             public void actionPerformed(ActionEvent e) {loadGame(gameType);}
         });
         reset.setFont(new Font(reset.getFont().getFontName(), Font.PLAIN, 20));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        frame.add(reset, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 1;
+        FRAME.add(reset, GBC);
         
         
         final JButton back = new JButton("Back");
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.getContentPane().removeAll();
+                FRAME.getContentPane().removeAll();
                 homeScreen();
             }
         });
         back.setFont(new Font(back.getFont().getFontName(), Font.PLAIN, 20));
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        frame.add(back, gbc);
+        GBC.gridx = 2;
+        GBC.gridy = 1;
+        FRAME.add(back, GBC);
         
         final JButton pausePlay = new JButton("Pause/Play");
         pausePlay.setFont(new Font(pausePlay.getFont().getFontName(), Font.PLAIN, 20));
         boolean isPaused = false;    
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        frame.add(pausePlay, gbc);
+        GBC.gridx = 3;
+        GBC.gridy = 1;
+        FRAME.add(pausePlay, GBC);
         pausePlay.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -200,18 +191,18 @@ public class Game implements Runnable {
                 }
                 else if (grid.getGameStatus() == GameStatus.PLAYING) {
                     grid.setGameStatus(GameStatus.PAUSED);
-                    frame.remove(grid);
+                    FRAME.remove(grid);
                 } else if (grid.getGameStatus() == GameStatus.PAUSED) {
                     grid.setGameStatus(GameStatus.PLAYING);
-                    gbc.gridx = 0;
-                    gbc.gridy = 0;
-                    gbc.gridwidth = 6;
-                    frame.add(grid, gbc);
+                    GBC.gridx = 0;
+                    GBC.gridy = 0;
+                    GBC.gridwidth = 6;
+                    FRAME.add(grid, GBC);
                     grid.repaint();
                 }
                 timer.pause();
-                frame.validate();
-                frame.repaint();
+                FRAME.validate();
+                FRAME.repaint();
             }
         });
         
@@ -219,9 +210,9 @@ public class Game implements Runnable {
 
         final JLabel bombsLeft = new JLabel("Mines left: " + bombsLeftNum);
         bombsLeft.setFont(new Font(bombsLeft.getFont().getFontName(), Font.PLAIN, 20));
-        gbc.gridx = 5;
-        gbc.gridy = 1;
-        frame.add(bombsLeft, gbc);
+        GBC.gridx = 5;
+        GBC.gridy = 1;
+        FRAME.add(bombsLeft, GBC);
         
           
         Timer ticker = new Timer(100, null);
@@ -235,8 +226,8 @@ public class Game implements Runnable {
             }
         });       
         ticker.start();
-        frame.validate();
-        frame.repaint();
+        FRAME.validate();
+        FRAME.repaint();
     }
     
     /**
@@ -265,14 +256,14 @@ public class Game implements Runnable {
                 highScorePopUp(gdp, difficultyLevel, duration);
                 viewHighScores();
             } else {
-                JOptionPane.showMessageDialog(frame, "You won in " + GameTimer.durationToString(duration) + " minutes. \n Not quite fast enough for a high score!");
-                frame.repaint();
+                JOptionPane.showMessageDialog(FRAME, "You won in " + GameTimer.durationToString(duration) + " minutes. \n Not quite fast enough for a high score!");
+                FRAME.repaint();
             }
             return true;
 
         } else if (g.getGameStatus() == GameStatus.GAMELOST) {
             timer.pause();
-            JOptionPane.showMessageDialog(frame, "Unlucky, you lost. Try again!");
+            JOptionPane.showMessageDialog(FRAME, "Unlucky, you lost. Try again!");
             return true;
         }
         
@@ -283,13 +274,13 @@ public class Game implements Runnable {
      * Loads the instruction screen. Formatted in HTML
      */
     private void loadInstructions() {        
-        frame.getContentPane().removeAll();
+        FRAME.getContentPane().removeAll();
         JLabel instructions = new JLabel("<html>Instructions<br>");
         instructions.setFont(new Font(instructions.getFont().getFontName(), Font.BOLD, 25));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 3;
-        frame.add(instructions, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 0;
+        GBC.gridwidth = 3;
+        FRAME.add(instructions, GBC);
         
         String html = "<html><div style=\"font-size: 14; text-align: justify\">"
                 .concat("Everyone's played Minesweeper before, but this is Minesweeper <strong>in Pink</strong><br>")
@@ -313,9 +304,9 @@ public class Game implements Runnable {
                 .concat("Have fun playing! And if you see a 'problem', it's not a bug, it's a")
                 .concat("<br>feature :)</br></div></html>");
         JLabel textArea = new JLabel(html);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        frame.add(textArea, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 1;
+        FRAME.add(textArea, GBC);
         
 
         
@@ -324,51 +315,51 @@ public class Game implements Runnable {
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.getContentPane().removeAll();
+                FRAME.getContentPane().removeAll();
                 homeScreen();
             }
         });
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        frame.add(back, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 2;
+        FRAME.add(back, GBC);
         
         String funFact = "<html> <i> Fun fact: When you click on a block with no bomb neighbours, suddenly the<br>" +
                 "neighbours of that block all 'cascade' and get clicked too. That's called the <br> Flood Fill algorithm.</i>";
         
         final JLabel funFactLabel = new JLabel(funFact);
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        frame.add(funFactLabel, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 4;
+        FRAME.add(funFactLabel, GBC);
         
-        frame.validate();
-        frame.repaint();
+        FRAME.validate();
+        FRAME.repaint();
     }
     
     /**
      * View the high scores. Mainly uses the JTable component. Pulls from the GameDataParser
      */
     private void viewHighScores() {
-        gbc.insets = new Insets(6, 6, 6, 6);
-        gbc.ipady = 10;
-        frame.getContentPane().removeAll();
+        GBC.insets = new Insets(6, 6, 6, 6);
+        GBC.ipady = 10;
+        FRAME.getContentPane().removeAll();
         GameDataParser gdp = new GameDataParser("files/highscores.txt");
         String[] difficultyNames = {"Easy", "Medium", "Hard"};
         
         JLabel header = new JLabel("High Scores");
         header.setFont(new Font(header.getFont().getFontName(), Font.BOLD, 25));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 6;
-        frame.add(header, gbc);
+        GBC.gridx = 0;
+        GBC.gridy = 0;
+        GBC.gridwidth = 6;
+        FRAME.add(header, GBC);
         
-        gbc.gridwidth = 1;
+        GBC.gridwidth = 1;
         for (int i = 0; i < 3; i++) {
             String difficulty = difficultyNames[i];
-            gbc.gridx = 2 * i;
-            gbc.gridy = 1;
+            GBC.gridx = 2 * i;
+            GBC.gridy = 1;
             JLabel difficultyLabel = new JLabel(difficulty);
             difficultyLabel.setFont(new Font(difficultyLabel.getFont().getFontName(), Font.PLAIN, 18));
-            frame.add(difficultyLabel, gbc);
+            FRAME.add(difficultyLabel, GBC);
             
             ArrayList<ScoreData> dataset = gdp.getData(i);
             dataset = (ArrayList<ScoreData>) dataset.stream().sorted().collect(Collectors.toList());
@@ -390,9 +381,9 @@ public class Game implements Runnable {
             table.getColumnModel().getColumn(0).setPreferredWidth(200);
             table.getColumnModel().getColumn(1).setPreferredWidth(50);
 
-            gbc.gridx = 2 * i;
-            gbc.gridy = 2;
-            frame.add(table, gbc);
+            GBC.gridx = 2 * i;
+            GBC.gridy = 2;
+            FRAME.add(table, GBC);
         }
         
         final JButton back = new JButton("Back");
@@ -400,16 +391,16 @@ public class Game implements Runnable {
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.getContentPane().removeAll();
+                FRAME.getContentPane().removeAll();
                 homeScreen();
             }
         });
-        gbc.gridx = 2;
-        gbc.gridy = 3;
-        frame.add(back, gbc);
+        GBC.gridx = 2;
+        GBC.gridy = 3;
+        FRAME.add(back, GBC);
         
-        frame.validate();
-        frame.repaint();
+        FRAME.validate();
+        FRAME.repaint();
         
         
     }
@@ -422,7 +413,7 @@ public class Game implements Runnable {
      * @param duration
      */
     private void highScorePopUp(GameDataParser gdp, int difficultyLevel, int duration) {
-        String s = (String)JOptionPane.showInputDialog(frame, "Congrats you achieved a high score of " + GameTimer.durationToString(duration)+ " minutes! \nEnter your name to write your place in history:");
+        String s = (String)JOptionPane.showInputDialog(FRAME, "Congrats you achieved a high score of " + GameTimer.durationToString(duration)+ " minutes! \nEnter your name to write your place in history:");
         String user = "";
         String[] spaces = s.split(" ");
         for (int i = 0; i < spaces.length; i++) {

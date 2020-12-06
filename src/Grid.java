@@ -3,16 +3,10 @@
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Random;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.swing.*;
-
-import Enums.BlockState;
-import Enums.GameStatus;
-import Enums.LeftClickResponse;
 
 /** 
  * The most important class in Minesweeper. It has two main functionalities

@@ -1,13 +1,7 @@
 
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import javax.swing.*;
-
-import Enums.BlockState;
-import Enums.LeftClickResponse;
 
 /**
  * Abstract class that stores block information of the grid

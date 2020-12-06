@@ -1,11 +1,7 @@
 
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import Enums.BlockState;
-import Enums.LeftClickResponse;
 /**
  * the BombBlock is a game-ending block if clicked. There are only two ways it can
  * be drawn.

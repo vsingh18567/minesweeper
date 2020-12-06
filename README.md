@@ -109,6 +109,7 @@
     viewHighScores() - JTable of scores generated from the GameDataParser.
 
     loadInstructions() - simple instructions page
+7. Enums: BlockState, GameStatus, LeftClickResponse
         
 
 
