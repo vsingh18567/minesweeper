@@ -1,4 +1,4 @@
-package minesweeper;
+
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -10,6 +10,13 @@ import java.util.TreeSet;
 
 import javax.swing.*;
 
+/** 
+ * The most important class in Minesweeper. It has two main functionalities
+ * 1. Stores all the core logic of the actual game
+ * 2. Draws the grid
+ * @author vikramsingh
+ *
+ */
 public class Grid extends JPanel {
     private final static int WIDTH = 600;
     private final static int HEIGHT = 600;
@@ -22,6 +29,7 @@ public class Grid extends JPanel {
     // 1 if won, -1 if lost, 0 otherwise
     private GameStatus gameStatus;
     private final static String FILEPATH = "files/lastgame.txt";
+    private int bombsLeft;
     
     public Grid(int rows, int cols, int numBombs) {
         this.rows = rows;
@@ -34,10 +42,13 @@ public class Grid extends JPanel {
         this.mouseListenerHelper();
         this.gameStatus = GameStatus.PLAYING;
         this.setFocusable(true);
+        this.bombsLeft = this.numBombs;
+        this.setBackground(Color.pink);
     }
     
-    
-    
+    /**
+     * Helper function used in Grid constructor to detect and act on left and right click
+     */
     private void mouseListenerHelper() {
         this.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -45,8 +56,8 @@ public class Grid extends JPanel {
                 int y = e.getY();
                 int row = (int) x / size;
                 int col = (int) y / size;
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    try {
+                if (row < rows && col < cols) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
                         LeftClickResponse response = blocks[row][col].leftClick();
                         switch (response) {
                         case FLOODFILL:
@@ -60,27 +71,26 @@ public class Grid extends JPanel {
                             boolean win = isGameWon();
                             if (win) {
                                 gameStatus = GameStatus.GAMEWON;
-                                endGame();
                             }
                             break;
                         }
-                        repaint();
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // catches clicking on the last row/col which isn't actually part of grid
-                    }
-                } else if (e.getButton() == MouseEvent.BUTTON3) {
-                    try {
+                    } else if (e.getButton() == MouseEvent.BUTTON3) {
                         blocks[row][col].rightClick();
-                        repaint();
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // catches clicking on the last row/col which isn't actually part of grid
+                        if (blocks[row][col].getState() == BlockState.FLAGGED) {
+                            bombsLeft -= 1;
+                        } else {
+                            bombsLeft += 1;
+                        }
                     }
+                    repaint();
                 }
             }
        });
         
     }
-    
+    /**
+     * Resets the grid to a new randomly generated hidden grid.
+     */
     public void reset() {
         this.rows = rows;
         this.cols = cols;
@@ -93,7 +103,9 @@ public class Grid extends JPanel {
         repaint();
     }
     
-    
+    /**
+     * Generates the blocks from a randomly generated assignment of bombs.
+     */
     private void generateBlocks() {
         TreeSet<Integer> bombBlocks = getNRandom(this.numBombs, this.rows * this.cols);
         // Assign the bomb/safe block for each space in grid
@@ -110,36 +122,11 @@ public class Grid extends JPanel {
             this.blocks[row] = blockRow;
         }
         generateNeighbours();
-        
-
     }
     
-    private void setBlocks(Block[][] blockArr) {
-        this.blocks = blockArr;
-    }
-    
-    private void loadBlocks(BlockState[][] blockStates, TreeSet<Integer> bombLocations) {
-        Block[][] blockArr = new Block[this.rows][];
-        for (int row = 0; row < this.rows; row++) {
-            Block[] blockRow = new Block[this.cols];
-            for (int col = 0; col < this.cols; col++) {
-                if (bombLocations.size() != 0 && row * this.cols + col == bombLocations.first()) {
-                    blockRow[col] = new BombBlock(blockStates[row][col], this.size * row, this.size * col, this.size);
-                    bombLocations.pollFirst();
-                } else {
-                    blockRow[col] = new SafeBlock(blockStates[row][col], this.size * row, this.size * col, this.size);
-                }
-            }
-            blockArr[row] = blockRow;
-        }
-        this.blocks = blockArr;
-        System.out.println("STEP 2 " + this.blocks.length);
-        generateNeighbours();
-        System.out.println("STEP 3 " + this.blocks.length);
-        repaint();
-    }
-    
-    
+    /**
+     * Helper function generateBlocks() for that generates the number of neighbours for all the blocks
+     */
     private void generateNeighbours() {
         // Find number of neighbours
         for (int row = 0; row < this.rows; row++) {
@@ -162,7 +149,9 @@ public class Grid extends JPanel {
     }
     
     
-    // helper function
+    /**
+     * Helper function for generateBlocks() that picks n random blocks to be the bombs
+     */
     private static TreeSet<Integer> getNRandom(int n, int max) {
         TreeSet<Integer> set = new TreeSet<Integer>();      
         Random random = new Random();
@@ -174,7 +163,30 @@ public class Grid extends JPanel {
         return set;
     }
     
-    // helper for floodFill
+    
+    /**
+     * Recursive algorithm that, when triggered from a particular 0-neighbour block, discovers all neighbouring
+     * blocks until they are no longer 0-neighbour blocks. 
+     * @param row: row of the 0-neighbour block
+     * @param col: col of the 0-neighbour block
+     */
+    private void floodFill(int row, int col) {
+        Block block = this.blocks[row][col];
+        System.out.println(block.toString() + " " + block.getState() + " " + Integer.toString(block.getNeighbours()));
+        block.setState(BlockState.DISCOVERED);
+        if (block.getNeighbours() == 0) {
+            // recurse through all the neighbours of the block.
+            for (int[] neighbour:neighbours){
+                if (isSafe(row + neighbour[0], col + neighbour[1])) {
+                    floodFill(row + neighbour[0], col + neighbour[1]);
+                }
+            }
+        }
+    }
+    
+    /**
+     * helper function for floodFill that checks if the new block is undiscovered and within bounds
+     */
     private boolean isSafe(int row, int col) {
         boolean inGrid = row >= 0 && row < this.blocks.length && col >= 0 && col < this.blocks[0].length;
         if (inGrid) {
@@ -185,26 +197,9 @@ public class Grid extends JPanel {
         }
     }
     
-    
-    private void floodFill(int row, int col) {
-        /* https://en.wikipedia.org/wiki/Flood_fill#Stack-based_recursive_implementation_(four-way)
-         * Start node: this.blocks[row][col]
-         * target-color: block.getState() == BlockState.UNCHECKED && block.getNeighbours() == 0
-         * replacement-color: block.setState(BlockState.DISCOVERED)
-         */
-        
-        Block block = this.blocks[row][col];
-        System.out.println(block.toString() + " " + block.getState() + " " + Integer.toString(block.getNeighbours()));
-        block.setState(BlockState.DISCOVERED);
-        if (block.getNeighbours() == 0) {
-            for (int[] neighbour:neighbours){
-                if (isSafe(row + neighbour[0], col + neighbour[1])) {
-                    floodFill(row + neighbour[0], col + neighbour[1]);
-                }
-            }
-        }
-    }
-    
+    /**
+     * Ends the game by discovering all blocks and changing game status.
+     */
     private void endGame() {
         for (int row = 0; row < this.rows; row++) {
             for (int col = 0; col < this.cols; col++) {
@@ -215,8 +210,13 @@ public class Grid extends JPanel {
         this.gameStatus = GameStatus.GAMELOST;
     }
     
-    
-    private boolean isGameWon() {
+    /**
+     * Checks if game is won, and if it is won, then discover all blocks
+     */
+    public boolean isGameWon() {
+        if (this.gameStatus == GameStatus.GAMELOST) {
+            return false;
+        }
         for (int row = 0; row < this.rows; row++) {
             for (int col = 0; col < this.cols; col++) {
                 Block block = this.blocks[row][col];
@@ -225,6 +225,13 @@ public class Grid extends JPanel {
                 }
             }
         }
+        for (int row = 0; row < this.rows; row++) {
+            for (int col = 0; col < this.cols; col++) {
+                Block block = this.blocks[row][col];
+                block.setState(BlockState.DISCOVERED);
+            }
+        }
+        repaint();
         this.gameStatus = GameStatus.GAMEWON;
         return true;
     }
@@ -242,10 +249,15 @@ public class Grid extends JPanel {
         return this.blocks.clone();
     }
     
+    public int getBombsLeft() {
+        return this.bombsLeft;
+    }
+    
     @Override
     public void paintComponent(Graphics g) {
         int shift;
         switch (this.rows) {
+        // adjust font size based on number of blocks
         case 23:
             g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 12));
             shift = 3;
@@ -261,7 +273,6 @@ public class Grid extends JPanel {
         }
         
         super.paintComponent(g);
-        System.out.println("STEP 8 " + this.getBlocks().length);
         Graphics2D g2D = (Graphics2D) g;
         for (int row = 0; row < this.rows; row++) {
             for (int col = 0; col < this.cols; col++) {

@@ -1,9 +1,14 @@
-package minesweeper;
+
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
+/**
+ * the BombBlock is a game-ending block if clicked. There are only two ways it can
+ * be drawn.
+ * @author vikramsingh
+ *
+ */
 public class BombBlock extends Block {
     private BlockState state;
     private int x;
@@ -24,6 +29,9 @@ public class BombBlock extends Block {
         return -1;
     }
     
+    /**
+     * If clicked, it triggers Grid.endgame()
+     */
     @Override
     protected LeftClickResponse leftClick() {
         setState(BlockState.DISCOVERED);
@@ -40,7 +48,7 @@ public class BombBlock extends Block {
             g.setColor(Color.RED);
             break;
         case FLAGGED:
-            g.setColor(Color.ORANGE);
+            g.setColor(new Color(255, 140, 0));
             break;
         }
         g.fillRect(getX(), getY(), getWidth(), getWidth());

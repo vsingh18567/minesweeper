@@ -1,5 +1,10 @@
-package minesweeper;
 
+/**
+ * Class that stores the user and their associated score. Implements comparable to allow for the ordering
+ * in the high-score table.
+ * @author vikramsingh
+ *
+ */
 public class ScoreData implements Comparable<ScoreData>{
     private String user;
     private int duration;

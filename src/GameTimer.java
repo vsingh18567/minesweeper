@@ -1,4 +1,4 @@
-package minesweeper;
+
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,35 +9,47 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
-
-public class GameTimer extends JLabel{
+/**
+ * The Game Timer class has three main functions
+ * 1. Store the time taken so far in the game
+ * 2. Allow for that time to be started/stopped/paused
+ * 3. Display that text once its added to a frame
+ * @author vikramsingh
+ *
+ */
+public class GameTimer extends JLabel {
     private Timer timer;
     private int duration;
     
     public GameTimer() {
         this.duration = 0;
-        this.setText(durationToString());
-        this.timer = new Timer(1000, new ActionListener() {
+        this.setText(durationToString(this.duration));
+        this.timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                duration += 1000;
-                updateText();
+                duration += 500;
+                updateGame();
             }
         });
         timer.start();
     
     }
     
-    public void updateText() {
-        this.setText(durationToString());
+    public void updateGame() {
+        this.setText(durationToString(this.duration));
     }
     
     public void reset() {
         this.duration = 0;
     }
     
-    public String durationToString() {
-       int seconds = (int) this.duration / 1000;
+    /**
+     * Valuable helper function that turns a millisecond-duration into a min:sec string.
+     * @param duration
+     * @return
+     */
+    public static String durationToString(int duration) {
+       int seconds = (int) duration / 1000;
        int minutes = (int) seconds / 60;
        seconds = seconds % 60;
        String sString;

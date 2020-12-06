@@ -1,4 +1,4 @@
-package minesweeper;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,13 +13,20 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
+/**
+ * The GameDataParser is the I/O class of the Minesweeper application. It interacts with a file,
+ * which is always files/highscores.txt. It has read and write functionality, and is also able to 
+ * check if a score is a new highscore.
+ * @author vikramsingh
+ *
+ */
 public class GameDataParser {
     private static final String DEFAULTGAME = "";
     private String filepath;
     private ArrayList<ScoreData> easyScore;
     private ArrayList<ScoreData> mediumScore;
     private ArrayList<ScoreData> hardScore;
+    // Maps integers to difficulties
     private HashMap<Integer, ArrayList<ScoreData>> difficultyMap;
     private String text;
 
@@ -38,7 +45,10 @@ public class GameDataParser {
 
     }
     
-    
+    /**
+     * Saves the most updated version of the ArrayLists that are storing the scores for the three
+     * difficulties. 
+     */
     public void saveData() {
         String data = "";
         boolean startingRow = true;
@@ -53,10 +63,8 @@ public class GameDataParser {
                 
             }
         }
-        data.trim();
-
-        System.out.println(data);
-        
+        // removes the space at the end.
+        data.trim();        
         try {
             FileWriter output = new FileWriter(this.filepath, false);
             BufferedWriter w = new BufferedWriter(output);
@@ -65,10 +73,11 @@ public class GameDataParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
-                
-        
     }
     
+    /**
+     * Helper function for the GameDataParser constructor. Reads the txt and loads the data into the three ArrayLists
+     */
     private void loadData() {
         try {
             FileReader fr = new FileReader(this.filepath);
@@ -94,28 +103,45 @@ public class GameDataParser {
             this.difficultyMap.get((int) i / 10).add(scoreData);
         }
     }
-    
+    /**
+     * Check if a score is a high score for a particular difficulty level
+     * @param difficultyLevel
+     * @param score
+     * @return true if is new high score
+     */
     public boolean isNewHighScore(int difficultyLevel, int score) {
         ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
-        ScoreData lowestScore = difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1); // highest duration
-        if (lowestScore.getDuration() > score) {
+        ScoreData lowestScore = difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1);
+        System.out.println(lowestScore); // highest duration
+        if (lowestScore.getDuration() > score / 1000) {
             return true;
         } else {
             return false;
         }
     }
     
+    /**
+     * insert score into the relevant ArrayList
+     * @param difficultyLevel 
+     * @param user
+     * @param score
+     */
     public void insertScore(int difficultyLevel, String user, int score) {
         ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
         difficultyData.remove(difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1));
-        ScoreData newScore = new ScoreData(user, score);
+        ScoreData newScore = new ScoreData(user, score / 1000);
         difficultyData.add(newScore);
         this.difficultyMap.put(difficultyLevel, difficultyData);
     }
     
-   public ArrayList<ScoreData> getData(int difficulty) {
+    /**
+     * Get the data for a particular difficulty
+     * @param difficulty
+     * @return
+     */
+    public ArrayList<ScoreData> getData(int difficulty) {
        return this.difficultyMap.get(difficulty);
-   }
+    }
     
     
     

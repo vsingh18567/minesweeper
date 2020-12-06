@@ -1,4 +1,4 @@
-package minesweeper;
+
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -6,6 +6,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
+/**
+ * Abstract class that stores block information of the grid
+ * @author vikramsingh
+ *
+ */
 public abstract class Block {
     private BlockState state;
     private int numberOfNeighbours;
@@ -54,7 +59,6 @@ public abstract class Block {
     public int getWidth() {
         return this.width;
     }
-    
     
     @Override
     public String toString() {

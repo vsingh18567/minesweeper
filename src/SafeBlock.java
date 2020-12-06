@@ -1,9 +1,13 @@
-package minesweeper;
+
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
+/**
+ * A SafeBlock is every block that is not a BombBlock. 
+ * @author vikramsingh
+ *
+ */
 public class SafeBlock extends Block {
     private BlockState state;
     private int numberOfNeighbours;
@@ -25,6 +29,11 @@ public class SafeBlock extends Block {
         return this.numberOfNeighbours;
     }
     
+    /**
+     * If a SafeBlock has no BombNeighbours, then the floodfill algorithm is triggered,
+     * because if a block has no BombNeighbours, then you can safely discover every
+     * neighbouring block
+     */
     @Override
     protected LeftClickResponse leftClick() {
         setState(BlockState.DISCOVERED);
@@ -44,7 +53,7 @@ public class SafeBlock extends Block {
             g.setColor(Color.GRAY);
             break;
         case DISCOVERED:
-            g.setColor(Color.GREEN);
+            g.setColor(new Color(50, 205, 50));
             
             break;
         case FLAGGED:
