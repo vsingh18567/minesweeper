@@ -2,12 +2,18 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.*;
+
+import Enums.GameStatus;
 
 /**
  * Minesweeper application developed by Vikram Singh as Homework 9 of CIS 120, Fall 2020.
@@ -99,6 +105,11 @@ public class Game implements Runnable {
         gbc.gridx = 0;
         gbc.gridy = 5;
         frame.add(instructions, gbc);
+        
+        JLabel credits = new JLabel("Made by Vikram Singh - Penn ID: 40121920");
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        frame.add(credits, gbc);
         frame.validate();        
         frame.repaint();
         
@@ -111,10 +122,7 @@ public class Game implements Runnable {
      */
     @SuppressWarnings("unchecked")
     private void loadGame(String gameType) {
-        frame.getContentPane().removeAll();
-        
-        String[] columnNames = {"User", "Score"};
-        
+        frame.getContentPane().removeAll();        
         
         Grid grid;
         int difficulty;
@@ -227,6 +235,8 @@ public class Game implements Runnable {
             }
         });       
         ticker.start();
+        frame.validate();
+        frame.repaint();
     }
     
     /**
@@ -253,7 +263,7 @@ public class Game implements Runnable {
             
             if (gdp.isNewHighScore(difficultyLevel, duration)) {
                 highScorePopUp(gdp, difficultyLevel, duration);
-                frame.repaint();
+                viewHighScores();
             } else {
                 JOptionPane.showMessageDialog(frame, "You won in " + GameTimer.durationToString(duration) + " minutes. \n Not quite fast enough for a high score!");
                 frame.repaint();
@@ -270,10 +280,68 @@ public class Game implements Runnable {
     }
     
     /**
-     * Loads the instruction screen
+     * Loads the instruction screen. Formatted in HTML
      */
-    private void loadInstructions() {
+    private void loadInstructions() {        
+        frame.getContentPane().removeAll();
+        JLabel instructions = new JLabel("<html>Instructions<br>");
+        instructions.setFont(new Font(instructions.getFont().getFontName(), Font.BOLD, 25));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        frame.add(instructions, gbc);
         
+        String html = "<html><div style=\"font-size: 14; text-align: justify\">"
+                .concat("Everyone's played Minesweeper before, but this is Minesweeper <strong>in Pink</strong><br>")
+                .concat("and that makes it better! To start a new game, choose a difficulty. If<br>")
+                .concat("you haven't played before, go with easy. It's really really easy.<br><br>")
+                .concat("The goal of the game is to find all the mines. Click on a block. If it's<br>")
+                .concat("a mine, that's game over! If not, then well done! The 'safe' blocks <br>")
+                .concat("show the number of neighbouring bombs. If you suspect that a block is<br>")
+                .concat("a bomb, <b>right-click</b> that block. If you think it's safe, take a risk,<br>")
+                .concat("and <b>left-click</b>. The game ends when you hit a 'bomb' and lose, or you<br>")
+                .concat("clear all the blocks (if you do it fast enough, you might make it onto the <br>")
+                .concat("leaderboard). It's not over till you see a pop-up!<br><br>")
+                .concat("If you need a break, just click pause. If you're paused, your timer stops<br>")
+                .concat("and the grid disappears. When you're ready to continue, click the same<br>")
+                .concat("button and the clock starts again.<br><br>")
+                .concat("If you want to just give up, click reset and just start again. Want to <br>")
+                .concat("move up a level? Go back to the home page and change the difficulty.<br><br>")
+                .concat("Feeling a bit competitive? Check the high scores to see if your name<br>")
+                .concat("is on the list. If not, try and complete the game faster than the times <br>")
+                .concat("on that list. <br><br>")
+                .concat("Have fun playing! And if you see a 'problem', it's not a bug, it's a")
+                .concat("<br>feature :)</br></div></html>");
+        JLabel textArea = new JLabel(html);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        frame.add(textArea, gbc);
+        
+
+        
+        final JButton back = new JButton("Back");
+        back.setFont(new Font(back.getFont().getFontName(), Font.PLAIN, 18));
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.getContentPane().removeAll();
+                homeScreen();
+            }
+        });
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        frame.add(back, gbc);
+        
+        String funFact = "<html> <i> Fun fact: When you click on a block with no bomb neighbours, suddenly the<br>" +
+                "neighbours of that block all 'cascade' and get clicked too. That's called the <br> Flood Fill algorithm.</i>";
+        
+        final JLabel funFactLabel = new JLabel(funFact);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        frame.add(funFactLabel, gbc);
+        
+        frame.validate();
+        frame.repaint();
     }
     
     /**
@@ -318,14 +386,13 @@ public class Game implements Runnable {
             
             JTable table = new JTable(scores, columnNames);
             table.setFont(new Font(table.getFont().getFontName(), Font.PLAIN, 16));
-            table.setRowHeight(20);
+            table.setRowHeight(30);
             table.getColumnModel().getColumn(0).setPreferredWidth(200);
             table.getColumnModel().getColumn(1).setPreferredWidth(50);
 
             gbc.gridx = 2 * i;
             gbc.gridy = 2;
             frame.add(table, gbc);
-            System.out.println(Arrays.deepToString(scores));
         }
         
         final JButton back = new JButton("Back");

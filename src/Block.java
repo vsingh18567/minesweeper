@@ -6,6 +6,9 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
+import Enums.BlockState;
+import Enums.LeftClickResponse;
+
 /**
  * Abstract class that stores block information of the grid
  * @author vikramsingh
@@ -41,10 +44,15 @@ public abstract class Block {
     public int getY() {
         return this.y;
     }
-
-    public abstract void setNeighbours(int number);
     
-    public abstract int getNeighbours();
+    public void setNeighbours(int number) {
+        this.numberOfNeighbours = number;
+    }
+    
+    
+    public int getNeighbours() {
+        return this.numberOfNeighbours;
+    }
         
     protected abstract LeftClickResponse leftClick();
     

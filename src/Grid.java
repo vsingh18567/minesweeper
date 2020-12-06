@@ -10,6 +10,10 @@ import java.util.TreeSet;
 
 import javax.swing.*;
 
+import Enums.BlockState;
+import Enums.GameStatus;
+import Enums.LeftClickResponse;
+
 /** 
  * The most important class in Minesweeper. It has two main functionalities
  * 1. Stores all the core logic of the actual game
@@ -18,8 +22,8 @@ import javax.swing.*;
  *
  */
 public class Grid extends JPanel {
-    private final static int WIDTH = 600;
-    private final static int HEIGHT = 600;
+    private final static int WIDTH = 700;
+    private final static int HEIGHT = 700;
     private int rows;
     private int cols;
     private int numBombs;
@@ -172,7 +176,6 @@ public class Grid extends JPanel {
      */
     private void floodFill(int row, int col) {
         Block block = this.blocks[row][col];
-        System.out.println(block.toString() + " " + block.getState() + " " + Integer.toString(block.getNeighbours()));
         block.setState(BlockState.DISCOVERED);
         if (block.getNeighbours() == 0) {
             // recurse through all the neighbours of the block.

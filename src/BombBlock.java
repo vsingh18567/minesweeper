@@ -3,6 +3,9 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
+import Enums.BlockState;
+import Enums.LeftClickResponse;
 /**
  * the BombBlock is a game-ending block if clicked. There are only two ways it can
  * be drawn.
@@ -10,10 +13,7 @@ import java.awt.Graphics2D;
  *
  */
 public class BombBlock extends Block {
-    private BlockState state;
-    private int x;
-    private int y;
-    private int width;
+
     
     public BombBlock(BlockState state, int x, int y, int width) {
         super(state, x, y, width);

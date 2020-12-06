@@ -1,3 +1,4 @@
+package Enums;
 
 /**
  * Enum that stores the various possible states that a block can have 

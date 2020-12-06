@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *
  */
 public class GameDataParser {
-    private static final String DEFAULTGAME = "";
+    private static final String DEFAULTGAME = "god_0 nan2_3600 nan3_3600 nan4_3600 hello_44 hello2_24 hello2_24 hellosir_42 VikramSingh_12 yasssssssqueens_22 god_0 nan2_3600 nan3_3600 nan4_3600 nan5_3600 nan6_3600 nan7_3600 nan8_3600 nan9_3600 nan10_3600 god_0 nan2_3600 nan3_3600 nan4_3600 nan5_3600 nan6_3600 nan7_3600 nan8_3600 nan9_3600 nan10_3600 ";
     private String filepath;
     private ArrayList<ScoreData> easyScore;
     private ArrayList<ScoreData> mediumScore;
@@ -112,7 +112,6 @@ public class GameDataParser {
     public boolean isNewHighScore(int difficultyLevel, int score) {
         ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
         ScoreData lowestScore = difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1);
-        System.out.println(lowestScore); // highest duration
         if (lowestScore.getDuration() > score / 1000) {
             return true;
         } else {
@@ -139,8 +138,9 @@ public class GameDataParser {
      * @param difficulty
      * @return
      */
+    @SuppressWarnings("unchecked")
     public ArrayList<ScoreData> getData(int difficulty) {
-       return this.difficultyMap.get(difficulty);
+       return (ArrayList<ScoreData>) this.difficultyMap.get(difficulty).clone();
     }
     
     

@@ -3,31 +3,21 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
+import Enums.BlockState;
+import Enums.LeftClickResponse;
 /**
  * A SafeBlock is every block that is not a BombBlock. 
  * @author vikramsingh
  *
  */
 public class SafeBlock extends Block {
-    private BlockState state;
-    private int numberOfNeighbours;
-    private int x;
-    private int y;
-    private int width;
+
     
     public SafeBlock(BlockState state, int x, int y, int width) {
         super(state, x, y, width);
     }
     
-    @Override
-    public void setNeighbours(int number) {
-        this.numberOfNeighbours = number;
-    }
-    
-    @Override
-    public int getNeighbours() {
-        return this.numberOfNeighbours;
-    }
     
     /**
      * If a SafeBlock has no BombNeighbours, then the floodfill algorithm is triggered,

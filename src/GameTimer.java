@@ -35,7 +35,7 @@ public class GameTimer extends JLabel {
     
     }
     
-    public void updateGame() {
+    private void updateGame() {
         this.setText(durationToString(this.duration));
     }
     
