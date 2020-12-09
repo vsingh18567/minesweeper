@@ -1,7 +1,6 @@
 
 
 import java.awt.*;
-import javax.swing.*;
 
 /**
  * Abstract class that stores block information of the grid
@@ -15,7 +14,7 @@ public abstract class Block {
     private int y;
     private int width;
     
-    public Block (BlockState state, int x, int y, int width) {
+    public Block(BlockState state, int x, int y, int width) {
         this.state = state;
         this.x = x;
         this.y = y;
@@ -64,7 +63,8 @@ public abstract class Block {
     
     @Override
     public String toString() {
-        return getState() + Integer.toString(this.x) + "," + Integer.toString(this.y) + "," + this.getNeighbours();
+        return getState() + Integer.toString(this.x) + "," + 
+                Integer.toString(this.y) + "," + this.getNeighbours();
     }
 
     public abstract void draw(Graphics2D g, int shift);

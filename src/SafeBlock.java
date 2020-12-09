@@ -25,8 +25,7 @@ public class SafeBlock extends Block {
         setState(BlockState.DISCOVERED);
         if (getNeighbours() == 0) {
             return LeftClickResponse.FLOODFILL;
-        }
-        else {
+        } else {
             return LeftClickResponse.ALLGOOD;
         }
     }
@@ -35,22 +34,22 @@ public class SafeBlock extends Block {
     public void draw(Graphics2D g, int shift) {
 
         switch (getState()) {
-        case UNCHECKED:
-            g.setColor(Color.GRAY);
-            break;
-        case DISCOVERED:
-            g.setColor(new Color(50, 205, 50));
-            
-            break;
-        case FLAGGED:
-            g.setColor(new Color(255, 140, 0));
-            break;
+            case DISCOVERED:
+                g.setColor(new Color(50, 205, 50));     
+                break;
+            case FLAGGED:
+                g.setColor(new Color(255, 140, 0));
+                break;
+            default:
+                g.setColor(Color.GRAY);
+                break;
         }
         g.fillRect(getX(), getY(), getWidth(), getWidth());
         g.setColor(Color.BLACK);
         g.drawRect(getX(), getY(), getWidth(), getWidth());
         if (getNeighbours() != 0 && getState() == BlockState.DISCOVERED) {
-            g.drawString(Integer.toString(this.getNeighbours()), getX() + getWidth() / 2 - shift, getY() + getWidth() / 2 + shift);
+            g.drawString(Integer.toString(this.getNeighbours()), 
+                    getX() + getWidth() / 2 - shift, getY() + getWidth() / 2 + shift);
         }
     }
     

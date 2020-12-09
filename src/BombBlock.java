@@ -37,15 +37,15 @@ public class BombBlock extends Block {
     @Override
     public void draw(Graphics2D g, int shift) {
         switch (getState()) {
-        case UNCHECKED:
-            g.setColor(Color.GRAY);
-            break;
-        case DISCOVERED:
-            g.setColor(Color.RED);
-            break;
-        case FLAGGED:
-            g.setColor(new Color(255, 140, 0));
-            break;
+            case DISCOVERED:
+                g.setColor(Color.RED);
+                break;
+            case FLAGGED:
+                g.setColor(new Color(255, 140, 0));
+                break;
+            default:
+                g.setColor(Color.GRAY);
+                break;
         }
         g.fillRect(getX(), getY(), getWidth(), getWidth());
         g.setColor(Color.BLACK);

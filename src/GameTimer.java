@@ -14,6 +14,10 @@ import javax.swing.Timer;
  *
  */
 public class GameTimer extends JLabel {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4953492418427086701L;
     private Timer timer;
     private int duration;
     
@@ -45,23 +49,23 @@ public class GameTimer extends JLabel {
      * @return
      */
     public static String durationToString(int duration) {
-       int seconds = (int) duration / 1000;
-       int minutes = (int) seconds / 60;
-       seconds = seconds % 60;
-       String sString;
-       if (seconds < 10) {
-           sString = "0" + Integer.toString(seconds);
-       } else {
-           sString = Integer.toString(seconds);
-       }
-       String mString;
-       if (minutes < 10) {
-           mString = "0" + Integer.toString(minutes);
-       } else {
-           mString = Integer.toString(minutes);
-       }
+        int seconds = (int) duration / 1000;
+        int minutes = (int) seconds / 60;
+        seconds = seconds % 60;
+        String sString;
+        if (seconds < 10) {
+            sString = "0" + Integer.toString(seconds);
+        } else {
+            sString = Integer.toString(seconds);
+        }
+        String mString;
+        if (minutes < 10) {
+            mString = "0" + Integer.toString(minutes);
+        } else {
+            mString = Integer.toString(minutes);
+        }
        
-       return mString + ":" + sString;
+        return mString + ":" + sString;
     }
     
     public void pause() {

@@ -16,6 +16,8 @@ import javax.swing.*;
  *
  */
 public class Grid extends JPanel {
+    
+    private static final long serialVersionUID = 3116733218137213053L;
     private final static int WIDTH = 700;
     private final static int HEIGHT = 700;
     private int rows;
@@ -23,10 +25,9 @@ public class Grid extends JPanel {
     private int numBombs;
     private Block[][] blocks;
     private int size;
-    private final static int[][] neighbours = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
-    // 1 if won, -1 if lost, 0 otherwise
+    private final static int[][] NEIGHBOURS = 
+        {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
     private GameStatus gameStatus;
-    private final static String FILEPATH = "files/lastgame.txt";
     private int bombsLeft;
     
     public Grid(int rows, int cols, int numBombs) {
@@ -58,19 +59,19 @@ public class Grid extends JPanel {
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         LeftClickResponse response = blocks[row][col].leftClick();
                         switch (response) {
-                        case FLOODFILL:
-                            floodFill(row, col);
-                            break;
-                        case ENDGAME:
-                            gameStatus = GameStatus.GAMELOST;
-                            endGame();
-                            break;
-                        case ALLGOOD:
-                            boolean win = isGameWon();
-                            if (win) {
-                                gameStatus = GameStatus.GAMEWON;
-                            }
-                            break;
+                            case FLOODFILL:
+                                floodFill(row, col);
+                                break;
+                            case ENDGAME:
+                                gameStatus = GameStatus.GAMELOST;
+                                endGame();
+                                break;
+                            default:
+                                boolean win = isGameWon();
+                                if (win) {
+                                    gameStatus = GameStatus.GAMEWON;
+                                }
+                                break;
                         }
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
                         blocks[row][col].rightClick();
@@ -83,16 +84,13 @@ public class Grid extends JPanel {
                     repaint();
                 }
             }
-       });
+        });
         
     }
     /**
      * Resets the grid to a new randomly generated hidden grid.
      */
     public void reset() {
-        this.rows = rows;
-        this.cols = cols;
-        this.numBombs = numBombs;
         this.blocks = new Block[this.rows][];
         this.size = Math.min(WIDTH, HEIGHT) / rows;
         this.generateBlocks();
@@ -111,10 +109,12 @@ public class Grid extends JPanel {
             Block[] blockRow = new Block[this.cols];
             for (int col = 0; col < this.cols; col++) {
                 if (!bombBlocks.isEmpty() && row * this.cols + col == bombBlocks.first()) {
-                    blockRow[col] = new BombBlock(BlockState.UNCHECKED, this.size * row, this.size * col, this.size);
+                    blockRow[col] = new BombBlock(BlockState.UNCHECKED, this.size * row, 
+                            this.size * col, this.size);
                     bombBlocks.pollFirst();
                 } else {
-                    blockRow[col] = new SafeBlock(BlockState.UNCHECKED, this.size * row, this.size * col, this.size);
+                    blockRow[col] = new SafeBlock(BlockState.UNCHECKED, this.size * row, 
+                            this.size * col, this.size);
                 }
             }
             this.blocks[row] = blockRow;
@@ -123,7 +123,8 @@ public class Grid extends JPanel {
     }
     
     /**
-     * Helper function generateBlocks() for that generates the number of neighbours for all the blocks
+     * Helper function generateBlocks() for that generates the number of neighbours 
+     * for all the blocks
      */
     private void generateNeighbours() {
         // Find number of neighbours
@@ -131,14 +132,14 @@ public class Grid extends JPanel {
             for (int col = 0; col < this.cols; col++) {
                 Block block = this.blocks[row][col];
                 int bombNeighbours = 0;
-                for (int[] neighbour: neighbours) {
-                    try {
-                        if (this.blocks[row+neighbour[0]][col+neighbour[1]].getNeighbours() == -1) {
+                for (int[] neighbour: NEIGHBOURS) {
+                    if (this.rows > row + neighbour[0] && this.cols > col + neighbour[1]
+                            && row + neighbour[0] >= 0 && col + neighbour[1] >= 0) {
+                        if (this.blocks[row + neighbour[0]][col + neighbour[1]].
+                                getNeighbours() == -1) {
                             bombNeighbours++;
-                        }
-                    } catch (ArrayIndexOutOfBoundsException ex){
-                        // catches the borders
-                        // e.g. if neighbour[0] = 1 and you're on the last row
+                        }   
+
                     }
                 }
                 block.setNeighbours(bombNeighbours);
@@ -154,7 +155,7 @@ public class Grid extends JPanel {
         TreeSet<Integer> set = new TreeSet<Integer>();      
         Random random = new Random();
      
-        while(set.size() < n){
+        while (set.size() < n) {
             int thisOne = random.nextInt(max);
             set.add(thisOne);
         }
@@ -163,8 +164,8 @@ public class Grid extends JPanel {
     
     
     /**
-     * Recursive algorithm that, when triggered from a particular 0-neighbour block, discovers all neighbouring
-     * blocks until they are no longer 0-neighbour blocks. 
+     * Recursive algorithm that, when triggered from a particular 0-neighbour block, 
+     * discovers all neighbouring blocks until they are no longer 0-neighbour blocks. 
      * @param row: row of the 0-neighbour block
      * @param col: col of the 0-neighbour block
      */
@@ -173,7 +174,7 @@ public class Grid extends JPanel {
         block.setState(BlockState.DISCOVERED);
         if (block.getNeighbours() == 0) {
             // recurse through all the neighbours of the block.
-            for (int[] neighbour:neighbours){
+            for (int[] neighbour:NEIGHBOURS) {
                 if (isSafe(row + neighbour[0], col + neighbour[1])) {
                     floodFill(row + neighbour[0], col + neighbour[1]);
                 }
@@ -185,7 +186,8 @@ public class Grid extends JPanel {
      * helper function for floodFill that checks if the new block is undiscovered and within bounds
      */
     private boolean isSafe(int row, int col) {
-        boolean inGrid = row >= 0 && row < this.blocks.length && col >= 0 && col < this.blocks[0].length;
+        boolean inGrid = row >= 0 && 
+                row < this.blocks.length && col >= 0 && col < this.blocks[0].length;
         if (inGrid) {
             Block block = this.blocks[row][col];
             return block.getState() != BlockState.DISCOVERED;
@@ -255,18 +257,18 @@ public class Grid extends JPanel {
         int shift;
         switch (this.rows) {
         // adjust font size based on number of blocks
-        case 23:
-            g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 12));
-            shift = 3;
-            break;
-        case 16:
-            g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 16));
-            shift = 4;
-            break;
-        default:
-            g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 20));
-            shift = 6;
-            break;
+            case 23:
+                g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 12));
+                shift = 3;
+                break;
+            case 16:
+                g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 16));
+                shift = 4;
+                break;
+            default:
+                g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 20));
+                shift = 6;
+                break;
         }
         
         super.paintComponent(g);

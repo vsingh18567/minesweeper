@@ -5,13 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 /**
  * The GameDataParser is the I/O class of the Minesweeper application. It interacts with a file,
@@ -21,7 +17,12 @@ import java.util.stream.Collectors;
  *
  */
 public class GameDataParser {
-    private static final String DEFAULTGAME = "god_0 nan2_3600 nan3_3600 nan4_3600 hello_44 hello2_24 hello2_24 hellosir_42 VikramSingh_12 yasssssssqueens_22 god_0 nan2_3600 nan3_3600 nan4_3600 nan5_3600 nan6_3600 nan7_3600 nan8_3600 nan9_3600 nan10_3600 god_0 nan2_3600 nan3_3600 nan4_3600 nan5_3600 nan6_3600 nan7_3600 nan8_3600 nan9_3600 nan10_3600 ";
+    private static final String DEFAULTGAME = 
+            "god_0 nan2_3600 nan3_3600 nan4_3600 hello_44 hello2_24 hello2_24" + 
+            "hellosir_42 VikramSingh_12 yasssssssqueens_22 god_0 nan2_3600 nan3_3600" + 
+            "nan4_3600 nan5_3600 nan6_3600 nan7_3600 nan8_3600 nan9_3600 nan10_3600" + 
+            "god_0 nan2_3600 nan3_3600 nan4_3600 nan5_3600 nan6_3600 nan7_3600 nan8_3600" + 
+            "nan9_3600 nan10_3600 ";
     private String filepath;
     private ArrayList<ScoreData> easyScore;
     private ArrayList<ScoreData> mediumScore;
@@ -52,7 +53,7 @@ public class GameDataParser {
     public void saveData() {
         String data = "";
         boolean startingRow = true;
-        for (int i=0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             ArrayList<ScoreData> difficultyData = this.difficultyMap.get(i);
             Iterator<ScoreData> iterator = difficultyData.iterator();
             while (iterator.hasNext()) {            
@@ -76,7 +77,8 @@ public class GameDataParser {
     }
     
     /**
-     * Helper function for the GameDataParser constructor. Reads the txt and loads the data into the three ArrayLists
+     * Helper function for the GameDataParser constructor. Reads the txt and 
+     * loads the data into the three ArrayLists
      */
     private void loadData() {
         try {
@@ -111,12 +113,9 @@ public class GameDataParser {
      */
     public boolean isNewHighScore(int difficultyLevel, int score) {
         ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
-        ScoreData lowestScore = difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1);
-        if (lowestScore.getDuration() > score / 1000) {
-            return true;
-        } else {
-            return false;
-        }
+        ScoreData lowestScore = difficultyData.stream().sorted().collect(Collectors.toList()).
+                get(difficultyData.size() - 1);
+        return lowestScore.getDuration() > score / 1000;
     }
     
     /**
@@ -127,7 +126,8 @@ public class GameDataParser {
      */
     public void insertScore(int difficultyLevel, String user, int score) {
         ArrayList<ScoreData> difficultyData = this.difficultyMap.get(difficultyLevel);
-        difficultyData.remove(difficultyData.stream().sorted().collect(Collectors.toList()).get(difficultyData.size() - 1));
+        difficultyData.remove(difficultyData.stream().
+                sorted().collect(Collectors.toList()).get(difficultyData.size() - 1));
         ScoreData newScore = new ScoreData(user, score / 1000);
         difficultyData.add(newScore);
         this.difficultyMap.put(difficultyLevel, difficultyData);
@@ -140,7 +140,7 @@ public class GameDataParser {
      */
     @SuppressWarnings("unchecked")
     public ArrayList<ScoreData> getData(int difficulty) {
-       return (ArrayList<ScoreData>) this.difficultyMap.get(difficulty).clone();
+        return (ArrayList<ScoreData>) this.difficultyMap.get(difficulty).clone();
     }
     
     

@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  * Minesweeper application developed by Vikram Singh as Homework 9 of CIS 120, Fall 2020.
@@ -28,7 +30,8 @@ public class Game implements Runnable {
     }
     
     /**
-     * Home screen that contains title, buttons that lead to "New Game", "View High Scores" and instructions.
+     * Home screen that contains title, buttons that lead to 
+     * "New Game", "View High Scores" and instructions.
      */
     private void homeScreen() {
         FRAME.getContentPane().removeAll();
@@ -53,7 +56,7 @@ public class Game implements Runnable {
         
         
         String[] difficulties = {"Easy", "Medium", "Hard"};
-        JComboBox difficultyList = new JComboBox<String>(difficulties);
+        JComboBox<String> difficultyList = new JComboBox<String>(difficulties);
         difficultyList.setFont(new Font(difficultyList.getFont().getFontName(), Font.PLAIN, 18));
         GBC.gridx = 1;
         GBC.gridy = 2;
@@ -107,11 +110,11 @@ public class Game implements Runnable {
     }
     
     /**
-     * Main game screen - has all the core logic that's handled through the Grid and the related buttons.
+     * Main game screen - has all the core logic that's handled through 
+     * the Grid and the related buttons.
      * Triggered by home screen.
      * @param gameType: String -- "Easy", "Medium", "Hard"
      */
-    @SuppressWarnings("unchecked")
     private void loadGame(String gameType) {
         FRAME.getContentPane().removeAll();        
         
@@ -119,18 +122,18 @@ public class Game implements Runnable {
         int difficulty;
         
         switch (gameType) {
-        case "Hard":
-            grid = new Grid(23, 23, 99);
-            difficulty = 2;
-            break;
-        case "Medium":
-            grid = new Grid(16, 16, 40);
-            difficulty = 1;
-            break;
-        default:
-            grid = new Grid(9, 9, 5);
-            difficulty = 0;
-            break;
+            case "Hard":
+                grid = new Grid(23, 23, 99);
+                difficulty = 2;
+                break;
+            case "Medium":
+                grid = new Grid(16, 16, 40);
+                difficulty = 1;
+                break;
+            default:
+                grid = new Grid(9, 9, 5);
+                difficulty = 0;
+                break;
         }
         
         
@@ -152,7 +155,9 @@ public class Game implements Runnable {
         final JButton reset = new JButton("Reset");
         reset.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {loadGame(gameType);}
+            public void actionPerformed(ActionEvent e) {
+                loadGame(gameType);
+            }
         });
         reset.setFont(new Font(reset.getFont().getFontName(), Font.PLAIN, 20));
         GBC.gridx = 0;
@@ -175,7 +180,6 @@ public class Game implements Runnable {
         
         final JButton pausePlay = new JButton("Pause/Play");
         pausePlay.setFont(new Font(pausePlay.getFont().getFontName(), Font.PLAIN, 20));
-        boolean isPaused = false;    
         GBC.gridx = 3;
         GBC.gridy = 1;
         FRAME.add(pausePlay, GBC);
@@ -183,13 +187,13 @@ public class Game implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 /*
-                 * Based on what the current game state is, pause/play does different things. The grid is removed from the screen
-                 * on purpose to prevent "cheating" by pausing and continuing to think about options.
+                 * Based on what the current game state is, pause/play does different things. 
+                 * The grid is removed from the screen on purpose to prevent "cheating" by 
+                 * pausing and continuing to think about options.
                  */
                 if (grid.getGameStatus() == GameStatus.GAMELOST || grid.isGameWon()) {
                     return;
-                }
-                else if (grid.getGameStatus() == GameStatus.PLAYING) {
+                } else if (grid.getGameStatus() == GameStatus.PLAYING) {
                     grid.setGameStatus(GameStatus.PAUSED);
                     FRAME.remove(grid);
                 } else if (grid.getGameStatus() == GameStatus.PAUSED) {
@@ -233,7 +237,8 @@ public class Game implements Runnable {
     /**
      * Handles parts of the frame that need to be continuously upgraded. There are three
      * main functionalities
-     * 1. Check if the game state has changed and act accordingly (i.e. throw message dialog / input dialog)
+     * 1. Check if the game state has changed and act accordingly (i.e. throw message dialog 
+     * / input dialog)
      * 2. Update bombs left
      * 3. Update timer
      * @param g: the game grid
@@ -256,7 +261,9 @@ public class Game implements Runnable {
                 highScorePopUp(gdp, difficultyLevel, duration);
                 viewHighScores();
             } else {
-                JOptionPane.showMessageDialog(FRAME, "You won in " + GameTimer.durationToString(duration) + " minutes. \n Not quite fast enough for a high score!");
+                JOptionPane.showMessageDialog(FRAME, "You won in " + 
+                        GameTimer.durationToString(duration) + 
+                        " minutes. \n Not quite fast enough for a high score!");
                 FRAME.repaint();
             }
             return true;
@@ -281,25 +288,34 @@ public class Game implements Runnable {
         GBC.gridy = 0;
         GBC.gridwidth = 3;
         FRAME.add(instructions, GBC);
-        
-        String html = "<html><div style=\"font-size: 14; text-align: justify\">"
-                .concat("Everyone's played Minesweeper before, but this is Minesweeper <strong>in Pink</strong><br>")
-                .concat("and that makes it better! To start a new game, choose a difficulty. If<br>")
-                .concat("you haven't played before, go with easy. It's really really easy.<br><br>")
-                .concat("The goal of the game is to find all the mines. Click on a block. If it's<br>")
-                .concat("a mine, that's game over! If not, then well done! The 'safe' blocks <br>")
-                .concat("show the number of neighbouring bombs. If you suspect that a block is<br>")
-                .concat("a bomb, <b>right-click</b> that block. If you think it's safe, take a risk,<br>")
-                .concat("and <b>left-click</b>. The game ends when you hit a 'bomb' and lose, or you<br>")
-                .concat("clear all the blocks (if you do it fast enough, you might make it onto the <br>")
+        // this is ugly to meet the <100 line length requirement.
+        String html = "<html><div style=\"font-size: 14; text-align: justify\">" +
+                      "Everyone's played Minesweeper before, but this is Minesweeper <strong>in" +
+                      "Pink</strong><br> and that makes it better! To start a new game, choose" + 
+                      "a difficulty. If<br>you haven't played before, go with easy. It's really" + 
+                      "really easy.<br><br> The goal of the game is" 
+                      + "to find all the mines. Click on" + 
+                      "a block. If it's<br> a mine, that's game over!" + 
+                      "If not, then well done! The" + 
+                      "'safe' blocks <br> show the number of neighbouring bombs." + 
+                      "If you suspect that a block is<br>a bomb, <b>right-click</b> that block." + 
+                      "If you think it's safe, take a risk,<br> and <b>left-click</b>. The" + 
+                      "game ends when you hit a 'bomb'" + 
+                      "and lose, or you<br> clear all the blocks (if you do it fast enough," + 
+                      "you might make it onto the <br>"
                 .concat("leaderboard). It's not over till you see a pop-up!<br><br>")
-                .concat("If you need a break, just click pause. If you're paused, your timer stops<br>")
-                .concat("and the grid disappears. When you're ready to continue, click the same<br>")
+                .concat("If you need a break, just click pause. If you're paused," + 
+                        "your timer stops<br>")
+                .concat("and the grid disappears. When you're ready to continue, click the" + 
+                        "same<br>")
                 .concat("button and the clock starts again.<br><br>")
-                .concat("If you want to just give up, click reset and just start again. Want to <br>")
-                .concat("move up a level? Go back to the home page and change the difficulty.<br><br>")
+                .concat("If you want to just give up, click reset and just start again." + 
+                        "Want to <br>")
+                .concat("move up a level? Go back to the home page and change the difficulty." + 
+                        "<br><br>")
                 .concat("Feeling a bit competitive? Check the high scores to see if your name<br>")
-                .concat("is on the list. If not, try and complete the game faster than the times <br>")
+                .concat("is on the list. If not, try and complete the game faster than the" +
+                        "times <br>")
                 .concat("on that list. <br><br>")
                 .concat("Have fun playing! And if you see a 'problem', it's not a bug, it's a")
                 .concat("<br>feature :)</br></div></html>");
@@ -323,8 +339,9 @@ public class Game implements Runnable {
         GBC.gridy = 2;
         FRAME.add(back, GBC);
         
-        String funFact = "<html> <i> Fun fact: When you click on a block with no bomb neighbours, suddenly the<br>" +
-                "neighbours of that block all 'cascade' and get clicked too. That's called the <br> Flood Fill algorithm.</i>";
+        String funFact = "<html> <i> Fun fact: When you click on a block with no bomb" + 
+                "neighbours, suddenly the<br> neighbours of that block all 'cascade' and get" +
+                "clicked too. That's called the <br> Flood Fill algorithm.</i>";
         
         final JLabel funFactLabel = new JLabel(funFact);
         GBC.gridx = 0;
@@ -350,7 +367,7 @@ public class Game implements Runnable {
         GBC.gridx = 0;
         GBC.gridy = 0;
         GBC.gridwidth = 6;
-        FRAME.add(header, GBC);
+        FRAME.add(header, GBC);  
         
         GBC.gridwidth = 1;
         for (int i = 0; i < 3; i++) {
@@ -358,7 +375,8 @@ public class Game implements Runnable {
             GBC.gridx = 2 * i;
             GBC.gridy = 1;
             JLabel difficultyLabel = new JLabel(difficulty);
-            difficultyLabel.setFont(new Font(difficultyLabel.getFont().getFontName(), Font.PLAIN, 18));
+            difficultyLabel.setFont(new Font(difficultyLabel.getFont().
+                    getFontName(), Font.PLAIN, 18));
             FRAME.add(difficultyLabel, GBC);
             
             ArrayList<ScoreData> dataset = gdp.getData(i);
@@ -375,7 +393,13 @@ public class Game implements Runnable {
                 scores[j] = scoreArr;
             }
             
-            JTable table = new JTable(scores, columnNames);
+            TableModel model = new DefaultTableModel(scores, columnNames) {
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };            
+            JTable table = new JTable(model);
+
             table.setFont(new Font(table.getFont().getFontName(), Font.PLAIN, 16));
             table.setRowHeight(30);
             table.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -413,7 +437,9 @@ public class Game implements Runnable {
      * @param duration
      */
     private void highScorePopUp(GameDataParser gdp, int difficultyLevel, int duration) {
-        String s = (String)JOptionPane.showInputDialog(FRAME, "Congrats you achieved a high score of " + GameTimer.durationToString(duration)+ " minutes! \nEnter your name to write your place in history:");
+        String s = (String)JOptionPane.showInputDialog(FRAME, 
+                "Congrats you achieved a high score of " + GameTimer.durationToString(duration) + 
+                " minutes! \nEnter your name to write your place in history:");
         String user = "";
         String[] spaces = s.split(" ");
         for (int i = 0; i < spaces.length; i++) {
