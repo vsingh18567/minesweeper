@@ -290,23 +290,23 @@ public class Game implements Runnable {
         FRAME.add(instructions, GBC);
         // this is ugly to meet the <100 line length requirement.
         String html = "<html><div style=\"font-size: 14; text-align: justify\">" +
-                      "Everyone's played Minesweeper before, but this is Minesweeper <strong>in" +
+                      "Everyone's played Minesweeper before, but this is Minesweeper <strong>in " +
                       "Pink</strong><br> and that makes it better! To start a new game, choose" + 
                       "a difficulty. If<br>you haven't played before, go with easy. It's really" + 
-                      "really easy.<br><br> The goal of the game is" 
-                      + "to find all the mines. Click on" + 
-                      "a block. If it's<br> a mine, that's game over!" + 
-                      "If not, then well done! The" + 
+                      "really easy.<br><br> The goal of the game is " 
+                      + "to find all the mines. Click on " + 
+                      "a block. If it's<br> a mine, that's game over! " + 
+                      "If not, then well done! The " + 
                       "'safe' blocks <br> show the number of neighbouring bombs." + 
                       "If you suspect that a block is<br>a bomb, <b>right-click</b> that block." + 
-                      "If you think it's safe, take a risk,<br> and <b>left-click</b>. The" + 
+                      " If you think it's safe, take a risk,<br> and <b>left-click</b>. The " + 
                       "game ends when you hit a 'bomb'" + 
-                      "and lose, or you<br> clear all the blocks (if you do it fast enough," + 
+                      " and lose, or you<br> clear all the blocks (if you do it fast enough, " + 
                       "you might make it onto the <br>"
                 .concat("leaderboard). It's not over till you see a pop-up!<br><br>")
-                .concat("If you need a break, just click pause. If you're paused," + 
+                .concat("If you need a break, just click pause. If you're paused, " + 
                         "your timer stops<br>")
-                .concat("and the grid disappears. When you're ready to continue, click the" + 
+                .concat("and the grid disappears. When you're ready to continue, click the " + 
                         "same<br>")
                 .concat("button and the clock starts again.<br><br>")
                 .concat("If you want to just give up, click reset and just start again." + 
@@ -314,11 +314,10 @@ public class Game implements Runnable {
                 .concat("move up a level? Go back to the home page and change the difficulty." + 
                         "<br><br>")
                 .concat("Feeling a bit competitive? Check the high scores to see if your name<br>")
-                .concat("is on the list. If not, try and complete the game faster than the" +
+                .concat("is on the list. If not, try and complete the game faster than the " +
                         "times <br>")
                 .concat("on that list. <br><br>")
-                .concat("Have fun playing! And if you see a 'problem', it's not a bug, it's a")
-                .concat("<br>feature :)</br></div></html>");
+                .concat("Have fun playing!");
         JLabel textArea = new JLabel(html);
         GBC.gridx = 0;
         GBC.gridy = 1;
@@ -443,10 +442,13 @@ public class Game implements Runnable {
         String user = "";
         String[] spaces = s.split(" ");
         for (int i = 0; i < spaces.length; i++) {
-            String[] _split = spaces[i].split("_");
-            for (int j = 0; j < _split.length; j++) {
-                user += _split[j];
+            String[] split = spaces[i].split("_");
+            for (int j = 0; j < split.length; j++) {
+                user += split[j];
             }
+        }
+        if (user.length() == 0) {
+            user = "na";
         }
         gdp.insertScore(difficultyLevel, user, duration);
         gdp.saveData();
